@@ -1,15 +1,58 @@
-﻿using System;
+﻿using DependencyUpdaterCore.Features.UpdateChecking;
+using DependencyUpdaterCore.Models;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace DependencyUpdaterCore.Features.FileUpdating
 {
-    public class CSharpProjectFileUpdater
+    public class CSharpProjectFileUpdater : ICSharpProjectFileUpdater
     {
-        public void UpdateCsprojFile(XDocument projectFile, List<string> latestDependencies)
+        public IList<string> UpdateCsProjFile(ICsProjPackageVersion csProjectFile, IList<IPackageInfo> packageInfos)
         {
+            var resultFiles = new List<string>();
 
+            var packageReferences = csProjectFile.File
+                    .XPathSelectElements("Project/ItemGroup/PackageReference");
+
+            foreach (var item in packageReferences)
+            {
+                var packageId = item.Attribute("Include").Value;
+                var currentVersion = item.Attribute("Version").Value;
+
+                var packageInfo = packageInfos.FirstOrDefault(v => v.PackageId == packageId);
+
+                if (ShouldUpdatePackageVersion(packageInfo, currentVersion))
+                {
+                    var clone = new XDocument(csProjectFile.File);
+
+                    var packageReference = clone.XPathSelectElements($"Project/ItemGroup/PackageReference[@Include='{packageId}']").FirstOrDefault();
+
+                    packageReference.Attribute("Version").SetValue(packageInfo.Version);
+
+                    resultFiles.Add(clone.ToString());
+                }  
+            }
+
+            return resultFiles;
+        }
+
+        private bool ShouldUpdatePackageVersion(IPackageInfo packageInfo, string currentVersion)
+        {
+            if (packageInfo == null || string.IsNullOrWhiteSpace(packageInfo.Version))
+            {
+                return false;
+            }
+
+            var versionComparison = new VersionComparer().Compare(packageInfo.Version, currentVersion);
+
+            if (versionComparison == 1)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
