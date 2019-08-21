@@ -21,9 +21,95 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
             _config = config;
         }
 
-        public async Task CreateBranch()
+        public async Task CreateCommitAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var creds = new VssBasicCredential(string.Empty, _config.Token);
+
+                using (var connection = new VssConnection(new Uri(_config.BaseUrl), creds))
+                {
+                    var gitClient = connection.GetClient<GitHttpClient>();
+
+                    var items = await gitClient
+                        .GetItemsAsync(
+                            project: _config.Project,
+                            repositoryId: _config.Repository
+                        );
+
+                    var commitId = items?.FirstOrDefault()?.CommitId;
+
+                    var result = await gitClient.CreatePushAsync(new GitPush
+                    {
+                        Commits = new List<GitCommitRef>
+                        {
+                            new GitCommitRef
+                            {
+                                Comment = "TEeeest yeeah",
+                                Changes = new List<GitChange>
+                                {
+                                    new GitChange
+                                    {
+                                        ChangeType = VersionControlChangeType.Add,
+                                        Item = new GitItem
+                                        {
+                                            Path = "/test.txt"
+                                        },
+                                        NewContent = new ItemContent
+                                        {
+                                            Content = "TEST!!@#",
+                                            ContentType = ItemContentType.RawText
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        RefUpdates = new List<GitRefUpdate>
+                        {
+                            new GitRefUpdate
+                            {
+                                Name = $"refs/heads/Updater_{DateTime.Now.Ticks}",
+                                OldObjectId = commitId,
+                            }
+                        }
+                    },
+                    project: _config.Project,
+                    repositoryId: _config.Repository
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task CreatePullRequestAsync()
+        {
+            try
+            {
+                var creds = new VssBasicCredential(string.Empty, _config.Token);
+
+                using (var connection = new VssConnection(new Uri(_config.BaseUrl), creds))
+                {
+                    var gitClient = connection.GetClient<GitHttpClient>();
+
+                    var result = await gitClient.CreatePullRequestAsync(new GitPullRequest
+                    {
+                        SourceRefName = "refs/heads/Updater_637020042045550575",
+                        TargetRefName = "refs/heads/master",
+                        Title = "Test Title",
+                        Description = "Test Description",
+                    },
+                    project: _config.Project,
+                    repositoryId: _config.Repository
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<IList<ICsProjResponse>> GetProjectDependencyFileAsync()
@@ -32,69 +118,70 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
             {
                 var creds = new VssBasicCredential(string.Empty, _config.Token);
 
-                var connection = new VssConnection(new Uri(_config.BaseUrl), creds);
-
-                var gitClient = connection.GetClient<GitHttpClient>();
-
-                var items = await gitClient
-                    .GetItemsAsync(
-                        project: _config.Project,
-                        repositoryId: _config.Repository
-                    );
-
-                var hash = items?.FirstOrDefault()?.ObjectId;
-
-                var repositoryTree = await gitClient.GetTreeAsync(
-                    project: _config.Project,
-                    repositoryId: _config.Repository,
-                    sha1: hash
-                    );
-
-                var solutionTrees = repositoryTree.TreeEntries
-                    .Where(w => w.GitObjectType == GitObjectType.Tree);
-
-                var result = new List<ICsProjResponse>();
-
-                foreach (var tree in solutionTrees)
+                using (var connection = new VssConnection(new Uri(_config.BaseUrl), creds))
                 {
-                    var innerTree = await gitClient.GetTreeAsync(
-                        project: _config.Project,
-                        repositoryId: _config.Repository,
-                        sha1: tree.ObjectId
+                    var gitClient = connection.GetClient<GitHttpClient>();
+
+                    var items = await gitClient
+                        .GetItemsAsync(
+                            project: _config.Project,
+                            repositoryId: _config.Repository
                         );
 
-                    var csprojEntries = innerTree.TreeEntries
-                        .Where(w => w.RelativePath.EndsWith(".csproj"));
+                    var hash = items?.FirstOrDefault()?.ObjectId;
 
-                    if (csprojEntries.Count() > 1)
+                    var repositoryTree = await gitClient.GetTreeAsync(
+                        project: _config.Project,
+                        repositoryId: _config.Repository,
+                        sha1: hash
+                        );
+
+                    var solutionTrees = repositoryTree.TreeEntries
+                        .Where(w => w.GitObjectType == GitObjectType.Tree);
+
+                    var result = new List<ICsProjResponse>();
+
+                    foreach (var tree in solutionTrees)
                     {
-                        throw new Exception("wtf? multiple .csproj files?");
+                        var innerTree = await gitClient.GetTreeAsync(
+                            project: _config.Project,
+                            repositoryId: _config.Repository,
+                            sha1: tree.ObjectId
+                            );
+
+                        var csprojEntries = innerTree.TreeEntries
+                            .Where(w => w.RelativePath.EndsWith(".csproj"));
+
+                        if (csprojEntries.Count() > 1)
+                        {
+                            throw new Exception("wtf? multiple .csproj files?");
+                        }
+
+                        var csprojItem = csprojEntries.FirstOrDefault();
+
+                        var csprojStream = await gitClient.GetBlobContentAsync(
+                            repositoryId: _config.Repository,
+                            project: _config.Project,
+                            sha1: csprojItem.ObjectId
+                            );
+
+                        using (csprojStream)
+                        {
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                csprojStream.CopyTo(ms);
+                                var array = ms.ToArray();
+                                result.Add(new CsProjResponse
+                                {
+                                    File = array,
+                                    FileRelativePath = csprojItem.RelativePath
+                                });
+                            }
+                        }
                     }
 
-                    var csprojItem = csprojEntries.FirstOrDefault();
-
-                    var csprojStream = await gitClient.GetBlobContentAsync(
-                        repositoryId: _config.Repository,
-                        project: _config.Project,
-                        sha1: csprojItem.ObjectId
-                        );
-
-                    using (csprojStream)
-                    {
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            csprojStream.CopyTo(ms);
-                            var array = ms.ToArray();
-                            result.Add(new CsProjResponse
-                            {
-                                File = array,
-                                FileName = csprojItem.RelativePath
-                            });
-                        }
-                    }   
+                    return result;
                 }
-
-                return result;
             }
             catch (Exception ex)
             {
