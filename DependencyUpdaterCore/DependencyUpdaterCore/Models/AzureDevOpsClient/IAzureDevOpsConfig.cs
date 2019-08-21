@@ -1,6 +1,6 @@
 ﻿namespace DependencyUpdaterCore.Models.AzureDevOpsClient
 {
-    public interface ICsProjRequest
+    public interface IAzureDevOpsConfig
     {
         string Project { get; }
         string Repository { get; }

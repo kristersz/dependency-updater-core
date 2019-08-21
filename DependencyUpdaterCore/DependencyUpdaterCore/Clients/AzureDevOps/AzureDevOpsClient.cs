@@ -14,27 +14,39 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
 {
     class AzureDevOpsClient : IAzureDevOpsClient
     {
-        public async Task<IList<ICsProjResponse>> GetProjectDependencyFileAsync(ICsProjRequest request)
+        private readonly IAzureDevOpsConfig _config;
+
+        public AzureDevOpsClient(IAzureDevOpsConfig config)
+        {
+            _config = config;
+        }
+
+        public async Task CreateBranch()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IList<ICsProjResponse>> GetProjectDependencyFileAsync()
         {
             try
             {
-                var creds = new VssBasicCredential(string.Empty, request.Token);
+                var creds = new VssBasicCredential(string.Empty, _config.Token);
 
-                var connection = new VssConnection(new Uri(request.BaseUrl), creds);
+                var connection = new VssConnection(new Uri(_config.BaseUrl), creds);
 
                 var gitClient = connection.GetClient<GitHttpClient>();
 
                 var items = await gitClient
                     .GetItemsAsync(
-                        project: request.Project,
-                        repositoryId: request.Repository
+                        project: _config.Project,
+                        repositoryId: _config.Repository
                     );
 
                 var hash = items?.FirstOrDefault()?.ObjectId;
 
                 var repositoryTree = await gitClient.GetTreeAsync(
-                    project: request.Project,
-                    repositoryId: request.Repository,
+                    project: _config.Project,
+                    repositoryId: _config.Repository,
                     sha1: hash
                     );
 
@@ -46,8 +58,8 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                 foreach (var tree in solutionTrees)
                 {
                     var innerTree = await gitClient.GetTreeAsync(
-                        project: request.Project,
-                        repositoryId: request.Repository,
+                        project: _config.Project,
+                        repositoryId: _config.Repository,
                         sha1: tree.ObjectId
                         );
 
@@ -62,8 +74,8 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                     var csprojItem = csprojEntries.FirstOrDefault();
 
                     var csprojStream = await gitClient.GetBlobContentAsync(
-                        repositoryId: request.Repository,
-                        project: request.Project,
+                        repositoryId: _config.Repository,
+                        project: _config.Project,
                         sha1: csprojItem.ObjectId
                         );
 

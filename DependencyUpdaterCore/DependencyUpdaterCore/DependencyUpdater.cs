@@ -12,7 +12,7 @@ namespace DependencyUpdaterCore
             _updateChecker = new DependencyUpdateChecker();
         }
 
-        public void UpdateDependencies(ICsProjRequest request)
+        public void UpdateDependencies(IAzureDevOpsConfig request)
         {
             // fetch dependency files
 
