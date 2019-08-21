@@ -26,10 +26,19 @@ namespace DependencyUpdaterCore.Features.FileParsing
 
                 foreach (var item in packageReferences)
                 {
+                    var version = item?.Attribute("Version")?.Value;
+                    var id = item?.Attribute("Include")?.Value;
+
+                    if (string.IsNullOrEmpty(version) ||
+                        string.IsNullOrEmpty(id))
+                    {
+                        continue;
+                    }
+
                     packageInfos.Add(new PackageInfo
                     {
-                        PackageId = item.Attribute("Include").Value,
-                        Version = item.Attribute("Version").Value
+                        PackageId = id,
+                        Version = version
                     });
                 }
 
