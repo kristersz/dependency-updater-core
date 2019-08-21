@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace DependencyUpdaterCore.Clients.NuGet
+namespace DependencyUpdaterCore.Clients.ProGet
 {
-    public interface INuGetClient
+    public interface IProGetClient
     {
         Task<string> GetLatestPackageVersion(string packageId);
     }
