@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using DependencyUpdaterCore.Features.UpdateChecking;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -10,70 +9,55 @@ namespace DependencyUpdaterCore.Clients.NuGet
 {
     public class NuGetClient : INuGetClient
     {
-        private readonly string _baseUrl = "http://cloudgallery.ifext.biz/nuget/If-Nuget";
+        private readonly string _baseUrl = "https://api.nuget.org/v3/registration3";
 
         public async Task<string> GetLatestPackageVersion(string packageId)
         {
             using (var httpClient = new HttpClient())
             {
-                var oDataQuery = $"$format=json&$filter=Id eq '{packageId}'&$select=Version";
-
-                var requestUri = $"{_baseUrl}/Packages()?{oDataQuery}";
+                var requestUri = $"{_baseUrl}/{packageId.ToLowerInvariant()}/index.json";
 
                 var response = await httpClient.GetAsync(requestUri);
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
                 var content = await response.Content.ReadAsStringAsync();
 
-                var json = JObject.Parse(content);
+                var packageMetadata = JsonConvert.DeserializeObject<NuGetPackageMetadata>(content);
 
-                var results = json["d"]["results"];
+                var catalogEntries = packageMetadata.Items
+                    .SelectMany(p => p.Items.Select(i => i.CatalogEntry))
+                    .ToList();
 
-                var allPublishedPackages = JsonConvert.DeserializeObject<List<PackageData>>(results.ToString());
-
-                var sortedByVersion = allPublishedPackages
-                    .OrderByDescending(p => p.Version, new VersionComparer())
+                var sortedByVersion = catalogEntries
+                    .OrderByDescending(c => c.Version, new VersionComparer())
                     .ToList();
 
                 return sortedByVersion.FirstOrDefault()?.Version;
             }
         }
 
-        private class PackageData
+        private class NuGetPackageMetadata
         {
-            public string Version { get; set; }
+            public List<NuGetPackageCatalogPage> Items { get; set; }
         }
 
-        private class VersionComparer : IComparer<string>
+        private class NuGetPackageCatalogPage
         {
-            public int Compare(string first, string second)
-            {
-                var versions = first.Split('.');
-                var otherVersions = second.Split('.');
+            public List<NugetPackage> Items { get; set; }
+        }
 
-                var majorVersionComparison = CompareNumbers(versions[0], otherVersions[0]);
+        private class NugetPackage
+        {
+            public NugetPackageDetails CatalogEntry { get; set; }
+        }
 
-                if (majorVersionComparison != 0)
-                {
-                    return majorVersionComparison;
-                }
-
-                var minorVersionComparison = CompareNumbers(versions[1], otherVersions[1]);
-
-                if (minorVersionComparison != 0)
-                {
-                    return minorVersionComparison;
-                }
-
-                return CompareNumbers(versions[2], otherVersions[2]);
-            }
-
-            private int CompareNumbers(string first, string second)
-            {
-                int.TryParse(first, out int firstInt);
-                int.TryParse(second, out int secondInt);
-
-                return firstInt.CompareTo(secondInt);
-            }
+        private class NugetPackageDetails
+        {
+            public string Version { get; set; }
         }
     }
 }
