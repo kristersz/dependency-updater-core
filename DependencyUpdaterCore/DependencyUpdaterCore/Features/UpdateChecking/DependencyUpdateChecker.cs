@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DependencyUpdaterCore.Features.UpdateChecking
 {
-    public class DependencyUpdateChecker
+    public class DependencyUpdateChecker : IDependencyUpdateChecker
     {
         private readonly INuGetClient _nuGetClient;
         private readonly IProGetClient _proGetClient;
