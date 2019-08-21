@@ -29,14 +29,14 @@ namespace DependencyUpdaterCore.Tests.Clients
         public async Task CreateCommitAsync()
         {
             await new AzureDevOpsClient(_config)
-                .CreateCommitAsync();
+                .CreateCommitAsync(null);
         }
 
         [TestMethod]
         public async Task CreatePullRequestAsync()
         {
             await new AzureDevOpsClient(_config)
-                .CreatePullRequestAsync();
+                .CreatePullRequestAsync(null);
         }
     }
 }

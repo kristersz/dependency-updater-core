@@ -21,11 +21,12 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
             _config = config;
         }
 
-        public async Task CreateCommitAsync()
+        public async Task<string> CreateCommitAsync(ICommitInfo commitInfo)
         {
             try
             {
                 var creds = new VssBasicCredential(string.Empty, _config.Token);
+                var branchName = $"Updater_{DateTime.Now.Ticks}";
 
                 using (var connection = new VssConnection(new Uri(_config.BaseUrl), creds))
                 {
@@ -39,13 +40,15 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
 
                     var commitId = items?.FirstOrDefault()?.CommitId;
 
+                    var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(commitInfo.Content);
+
                     var result = await gitClient.CreatePushAsync(new GitPush
                     {
                         Commits = new List<GitCommitRef>
                         {
                             new GitCommitRef
                             {
-                                Comment = "TEeeest yeeah",
+                                Comment = commitInfo.Comment,
                                 Changes = new List<GitChange>
                                 {
                                     new GitChange
@@ -53,12 +56,12 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                                         ChangeType = VersionControlChangeType.Add,
                                         Item = new GitItem
                                         {
-                                            Path = "/test.txt"
+                                            Path = commitInfo.FileRelativePath
                                         },
                                         NewContent = new ItemContent
                                         {
-                                            Content = "TEST!!@#",
-                                            ContentType = ItemContentType.RawText
+                                            Content = Convert.ToBase64String(plainTextBytes),
+                                            ContentType = ItemContentType.Base64Encoded
                                         }
                                     }
                                 }
@@ -68,7 +71,7 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                         {
                             new GitRefUpdate
                             {
-                                Name = $"refs/heads/Updater_{DateTime.Now.Ticks}",
+                                Name = $"refs/heads/{branchName}",
                                 OldObjectId = commitId,
                             }
                         }
@@ -77,6 +80,7 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                     repositoryId: _config.Repository
                     );
                 }
+                return branchName;
             }
             catch (Exception ex)
             {
@@ -84,7 +88,7 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
             }
         }
 
-        public async Task CreatePullRequestAsync()
+        public async Task CreatePullRequestAsync(IPullRequestInfo pullRequestInfo)
         {
             try
             {
@@ -96,10 +100,10 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
 
                     var result = await gitClient.CreatePullRequestAsync(new GitPullRequest
                     {
-                        SourceRefName = "refs/heads/Updater_637020042045550575",
+                        SourceRefName = $"refs/heads/{pullRequestInfo.SourceBranch}",
                         TargetRefName = "refs/heads/master",
-                        Title = "Test Title",
-                        Description = "Test Description",
+                        Title = pullRequestInfo.Title,
+                        Description = pullRequestInfo.Description,
                     },
                     project: _config.Project,
                     repositoryId: _config.Repository
@@ -174,7 +178,7 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                                 result.Add(new CsProjResponse
                                 {
                                     File = array,
-                                    FileRelativePath = csprojItem.RelativePath
+                                    FileRelativePath = $"/{tree.RelativePath}/{csprojItem.RelativePath}"
                                 });
                             }
                         }
