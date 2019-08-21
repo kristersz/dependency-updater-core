@@ -8,6 +8,10 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
     {
         Task<IList<ICsProjResponse>> GetProjectDependencyFileAsync();
 
-        Task CreateBranch();
+        Task CreateBranchAsync();
+
+        Task CreateCommitAsync();
+
+        Task CreatePullRequestAsync();
     }
 }

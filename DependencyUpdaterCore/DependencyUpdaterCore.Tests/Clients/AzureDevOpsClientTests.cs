@@ -8,10 +8,7 @@ namespace DependencyUpdaterCore.Tests.Clients
     [TestClass]
     public class AzureDevOpsClientTests
     {
-        [TestMethod]
-        public async Task MyTestMethod()
-        {
-            var config = new AzureDevOpsConfig
+        private readonly AzureDevOpsConfig _config = new AzureDevOpsConfig
             {
                 BaseUrl = "https://dev.azure.com/if-it",
                 Token = "vzj4iyh7e64lcif6jtlv5gwz3ka5hwhcwy5pqjcij3j7rdcbxbba",
@@ -19,10 +16,34 @@ namespace DependencyUpdaterCore.Tests.Clients
                 Repository = "riga-claims-dashboard"
             };
 
-            var result = await new AzureDevOpsClient(config)
+    [TestMethod]
+        public async Task GetProjectDependencyFileAsync()
+        {
+              var result = await new AzureDevOpsClient(_config)
                 .GetProjectDependencyFileAsync();
 
             Assert.AreEqual(2, result.Count);
+        }
+
+        [TestMethod]
+        public async Task CreateBranchAsync()
+        {
+            await new AzureDevOpsClient(_config)
+                .CreateBranchAsync();
+        }
+
+        [TestMethod]
+        public async Task CreateCommitAsync()
+        {
+            await new AzureDevOpsClient(_config)
+                .CreateCommitAsync();
+        }
+
+        [TestMethod]
+        public async Task CreatePullRequestAsync()
+        {
+            await new AzureDevOpsClient(_config)
+                .CreatePullRequestAsync();
         }
     }
 }
