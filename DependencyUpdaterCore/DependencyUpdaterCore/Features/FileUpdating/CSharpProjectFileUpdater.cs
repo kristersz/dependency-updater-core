@@ -18,8 +18,14 @@ namespace DependencyUpdaterCore.Features.FileUpdating
 
             foreach (var item in packageReferences)
             {
-                var packageId = item.Attribute("Include").Value;
-                var currentVersion = item.Attribute("Version").Value;
+                var currentVersion = item?.Attribute("Version")?.Value;
+                var packageId = item?.Attribute("Include")?.Value;
+
+                if (string.IsNullOrEmpty(currentVersion) ||
+                    string.IsNullOrEmpty(packageId))
+                {
+                    continue;
+                }
 
                 var packageInfo = packageInfos.FirstOrDefault(v => v.PackageId == packageId);
 
