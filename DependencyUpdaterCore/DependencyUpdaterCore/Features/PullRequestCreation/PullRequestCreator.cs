@@ -13,13 +13,13 @@ namespace DependencyUpdaterCore.Features.PullRequestCreation
             _azureDevOpsClient = azureDevOpsClient;
         }
 
-        public async Task CreatePullRequest(string content)
+        public async Task CreatePullRequest(ICreatePullRequestInfo createPullRequestInfo)
         {
             var commitRequest = new CommitInfo
             {
                 Comment = "Update commit",
-                Content = content,
-                FileRelativePath = "meeded"
+                Content = createPullRequestInfo.Content,
+                FileRelativePath = createPullRequestInfo.Path
             };
 
             var newBranch = await _azureDevOpsClient.CreateCommitAsync(commitRequest);
@@ -27,7 +27,7 @@ namespace DependencyUpdaterCore.Features.PullRequestCreation
             var request = new PullRequestInfo
             {
                 Description = "Automatic updates from updater.",
-                Title = "needed",
+                Title = "Auto updater",
                 SourceBranch = newBranch
             };
 

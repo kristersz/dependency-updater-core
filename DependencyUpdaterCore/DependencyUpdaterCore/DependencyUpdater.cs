@@ -3,6 +3,7 @@ using DependencyUpdaterCore.Features.FileParsing;
 using DependencyUpdaterCore.Features.FileUpdating;
 using DependencyUpdaterCore.Features.PullRequestCreation;
 using DependencyUpdaterCore.Features.UpdateChecking;
+using DependencyUpdaterCore.Models.AzureDevOpsClient;
 using System;
 using System.Threading.Tasks;
 
@@ -46,14 +47,19 @@ namespace DependencyUpdaterCore
 
                     foreach (var updatedFile in updatedFiles)
                     {
-                        // await _pullRequestCreator.CreatePullRequest(updatedFile);
+                        await _pullRequestCreator.CreatePullRequest(
+                            new CreatePullRequestInfo
+                            {
+                                Content = updatedFile,
+                                Path = file.FileRelativePath
+                            });
                     }
                 }
             }
             catch (Exception ex)
             {
                 throw;
-            }         
+            }
         }
     }
 }

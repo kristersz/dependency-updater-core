@@ -53,7 +53,7 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                                 {
                                     new GitChange
                                     {
-                                        ChangeType = VersionControlChangeType.Add,
+                                        ChangeType = VersionControlChangeType.Edit,
                                         Item = new GitItem
                                         {
                                             Path = commitInfo.FileRelativePath

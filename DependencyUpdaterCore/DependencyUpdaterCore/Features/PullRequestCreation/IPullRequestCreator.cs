@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using DependencyUpdaterCore.Models.AzureDevOpsClient;
+using System.Threading.Tasks;
 
 namespace DependencyUpdaterCore.Features.PullRequestCreation
 {
     public interface IPullRequestCreator
     {
-        Task CreatePullRequest(string content);
+        Task CreatePullRequest(ICreatePullRequestInfo createPullRequestInfo);
     }
 }
