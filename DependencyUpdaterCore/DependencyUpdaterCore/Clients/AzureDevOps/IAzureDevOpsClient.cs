@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DependencyUpdaterCore.Features.Clients.AzureDevOps
+namespace DependencyUpdaterCore.Clients.AzureDevOps
 {
     public interface IAzureDevOpsClient
     {

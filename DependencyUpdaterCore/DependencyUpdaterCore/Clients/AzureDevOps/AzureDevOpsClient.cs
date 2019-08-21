@@ -1,4 +1,4 @@
-﻿namespace DependencyUpdaterCore.Features.Clients.AzureDevOps
+﻿namespace DependencyUpdaterCore.Clients.AzureDevOps
 {
     class AzureDevOpsClient : IAzureDevOpsClient
     {
