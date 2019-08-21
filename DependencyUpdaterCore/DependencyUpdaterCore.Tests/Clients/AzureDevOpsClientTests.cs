@@ -11,7 +11,7 @@ namespace DependencyUpdaterCore.Tests.Clients
         [TestMethod]
         public async Task MyTestMethod()
         {
-            var request = new CsProjRequest
+            var config = new AzureDevOpsConfig
             {
                 BaseUrl = "https://dev.azure.com/if-it",
                 Token = "vzj4iyh7e64lcif6jtlv5gwz3ka5hwhcwy5pqjcij3j7rdcbxbba",
@@ -19,8 +19,8 @@ namespace DependencyUpdaterCore.Tests.Clients
                 Repository = "riga-claims-dashboard"
             };
 
-            var result = await new AzureDevOpsClient()
-                .GetProjectDependencyFileAsync(request);
+            var result = await new AzureDevOpsClient(config)
+                .GetProjectDependencyFileAsync();
 
             Assert.AreEqual(2, result.Count);
         }

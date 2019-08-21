@@ -6,6 +6,8 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
 {
     public interface IAzureDevOpsClient
     {
-        Task<IList<ICsProjResponse>> GetProjectDependencyFileAsync(ICsProjRequest request);
+        Task<IList<ICsProjResponse>> GetProjectDependencyFileAsync();
+
+        Task CreateBranch();
     }
 }

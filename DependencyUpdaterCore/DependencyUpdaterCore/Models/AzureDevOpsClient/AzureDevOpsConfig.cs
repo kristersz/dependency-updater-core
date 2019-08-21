@@ -1,6 +1,6 @@
 ﻿namespace DependencyUpdaterCore.Models.AzureDevOpsClient
 {
-    internal class CsProjRequest : ICsProjRequest
+    internal class AzureDevOpsConfig : IAzureDevOpsConfig
     {
         public string Project { get; set; }
 
