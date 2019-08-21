@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Clients\" />
     <Folder Include="Features\FileFetching\" />
     <Folder Include="Features\FileParsing\" />
     <Folder Include="Features\FileUpdating\" />
