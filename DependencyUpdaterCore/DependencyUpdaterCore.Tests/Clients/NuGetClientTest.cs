@@ -8,11 +8,13 @@ namespace DependencyUpdaterCore.Tests.Clients
     public class NuGetClientTest
     {
         [TestMethod]
-        public async Task SearchUpdates_SamplePackage_ReturnsVersion()
+        public async Task GetLatestPackageVersion_BotModelsPackage_ReturnsLatestVersion()
         {
             var client = new NuGetClient();
 
-            await client.SearchUpdates();
+            var latestVersion = await client.GetLatestPackageVersion("If.ClaimsForms.Bot.Models");
+
+            Assert.AreEqual("1.0.65", latestVersion);
         }
     }
 }
