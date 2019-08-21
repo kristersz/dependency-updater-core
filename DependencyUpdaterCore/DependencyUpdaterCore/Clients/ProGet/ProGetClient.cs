@@ -31,6 +31,7 @@ namespace DependencyUpdaterCore.Clients.ProGet
                 var allPublishedPackages = JsonConvert.DeserializeObject<List<PackageData>>(results.ToString());
 
                 var sortedByVersion = allPublishedPackages
+                    .Where(c => !c.Version.Contains("-"))
                     .OrderByDescending(p => p.Version, new VersionComparer())
                     .ToList();
 

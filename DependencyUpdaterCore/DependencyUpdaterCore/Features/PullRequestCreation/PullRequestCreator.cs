@@ -17,7 +17,7 @@ namespace DependencyUpdaterCore.Features.PullRequestCreation
         {
             var commitRequest = new CommitInfo
             {
-                Comment = "Update commit",
+                Comment = $"Updating package {createPullRequestInfo.PackageId}",
                 Content = createPullRequestInfo.Content,
                 FileRelativePath = createPullRequestInfo.Path
             };
@@ -27,7 +27,7 @@ namespace DependencyUpdaterCore.Features.PullRequestCreation
             var request = new PullRequestInfo
             {
                 Description = "Automatic updates from updater.",
-                Title = "Auto updater",
+                Title = $"Updating package {createPullRequestInfo.PackageId}",
                 SourceBranch = newBranch
             };
 

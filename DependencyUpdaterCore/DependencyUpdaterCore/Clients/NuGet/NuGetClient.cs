@@ -33,6 +33,7 @@ namespace DependencyUpdaterCore.Clients.NuGet
                     .ToList();
 
                 var sortedByVersion = catalogEntries
+                    .Where(c => !c.Version.Contains("-"))
                     .OrderByDescending(c => c.Version, new VersionComparer())
                     .ToList();
 

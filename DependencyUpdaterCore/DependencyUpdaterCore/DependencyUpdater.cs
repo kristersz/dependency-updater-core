@@ -50,8 +50,9 @@ namespace DependencyUpdaterCore
                         await _pullRequestCreator.CreatePullRequest(
                             new CreatePullRequestInfo
                             {
-                                Content = updatedFile,
-                                Path = file.FileRelativePath
+                                Content = updatedFile.FileContent,
+                                Path = file.FileRelativePath,
+                                PackageId = updatedFile.PackageId
                             });
                     }
                 }

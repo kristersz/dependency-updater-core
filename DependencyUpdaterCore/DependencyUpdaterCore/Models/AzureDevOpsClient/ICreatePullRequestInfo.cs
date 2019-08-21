@@ -4,5 +4,6 @@
     {
         string Content { get; }
         string Path { get; }
+        string PackageId { get; }
     }
 }
