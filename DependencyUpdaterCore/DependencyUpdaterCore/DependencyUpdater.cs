@@ -1,8 +1,10 @@
 ﻿using DependencyUpdaterCore.Features.FileFetching;
 using DependencyUpdaterCore.Features.FileParsing;
 using DependencyUpdaterCore.Features.FileUpdating;
+using DependencyUpdaterCore.Features.PullRequestCreation;
 using DependencyUpdaterCore.Features.UpdateChecking;
-using DependencyUpdaterCore.Models.AzureDevOpsClient;
+using System;
+using System.Threading.Tasks;
 
 namespace DependencyUpdaterCore
 {
@@ -12,30 +14,46 @@ namespace DependencyUpdaterCore
         private readonly ICSharpProjectParser _fileParser;
         private readonly ICSharpProjectFileUpdater _fileUpdater;
         private readonly IDependencyUpdateChecker _updateChecker;
+        private readonly IPullRequestCreator _pullRequestCreator;
 
         public DependencyUpdater(
             ICSharpProjectFileFetcher fileFetcher,
             ICSharpProjectParser fileParser,
             ICSharpProjectFileUpdater fileUpdater,
-            IDependencyUpdateChecker updateChecker)
+            IDependencyUpdateChecker updateChecker,
+            IPullRequestCreator pullRequestCreator)
         {
             _fileFetcher = fileFetcher;
             _fileParser = fileParser;
             _fileUpdater = fileUpdater;
             _updateChecker = updateChecker;
+            _pullRequestCreator = pullRequestCreator;
         }
 
-        public void UpdateDependencies(IAzureDevOpsConfig request)
+        public async Task UpdateDependencies()
         {
-            // fetch dependency files
+            try
+            {
+                var files = await _fileFetcher.GetProjectDependencyFileAsync();
 
-            // parse files to get a list of dependencies and their versions
+                foreach (var file in files)
+                {
+                    var dependencyInfo = _fileParser.GetCsProjDependencyInfo(file.File);
 
-            // check dependencies for updates
+                    var latestPackageVersions = await _updateChecker.CheckForUpdates(dependencyInfo.PackageInfos);
 
-            // update files with latest dependency versions
+                    var updatedFiles = _fileUpdater.UpdateCsProjFile(dependencyInfo, latestPackageVersions);
 
-            // create Pull Requests
+                    foreach (var updatedFile in updatedFiles)
+                    {
+                        // await _pullRequestCreator.CreatePullRequest(updatedFile);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }         
         }
     }
 }

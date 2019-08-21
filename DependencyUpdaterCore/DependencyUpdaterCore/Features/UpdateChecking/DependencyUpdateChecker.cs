@@ -1,5 +1,6 @@
 ﻿using DependencyUpdaterCore.Clients.NuGet;
 using DependencyUpdaterCore.Clients.ProGet;
+using DependencyUpdaterCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,25 +18,25 @@ namespace DependencyUpdaterCore.Features.UpdateChecking
             _proGetClient = new ProGetClient();
         }
 
-        public async Task<List<Tuple<string, string>>> CheckForUpdates(List<string> packageIds)
+        public async Task<IList<IPackageInfo>> CheckForUpdates(IList<IPackageInfo> packages)
         {
-            var result = new List<Tuple<string, string>>();
+            var result = new List<IPackageInfo>();
 
-            foreach (var packageId in packageIds)
+            foreach (var package in packages)
             {
-                var nugetPackageVersion = await _nuGetClient.GetLatestPackageVersion(packageId);
+                var nugetPackageVersion = await _nuGetClient.GetLatestPackageVersion(package.PackageId);
 
                 if (!string.IsNullOrWhiteSpace(nugetPackageVersion))
                 {
-                    result.Add(new Tuple<string, string>(packageId, nugetPackageVersion));
+                    result.Add(new PackageInfo { PackageId = package.PackageId, Version = nugetPackageVersion });
                 }
                 else
                 {
-                    var progetPackageVersion = await _proGetClient.GetLatestPackageVersion(packageId);
+                    var progetPackageVersion = await _proGetClient.GetLatestPackageVersion(package.PackageId);
 
                     if (!string.IsNullOrWhiteSpace(progetPackageVersion))
                     {
-                        result.Add(new Tuple<string, string>(packageId, progetPackageVersion));
+                        result.Add(new PackageInfo { PackageId = package.PackageId, Version = progetPackageVersion });
                     }
                 }
             }
