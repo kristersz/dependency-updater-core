@@ -7,6 +7,7 @@
   <ItemGroup>
     <Folder Include="Features\FileFetching\" />
     <Folder Include="Features\FileParsing\" />
+    <Folder Include="Features\FileUpdating\" />
     <Folder Include="Features\PullRequestCreation\" />
   </ItemGroup>
 
