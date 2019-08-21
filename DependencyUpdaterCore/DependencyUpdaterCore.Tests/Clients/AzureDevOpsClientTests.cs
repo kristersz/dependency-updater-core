@@ -26,13 +26,6 @@ namespace DependencyUpdaterCore.Tests.Clients
         }
 
         [TestMethod]
-        public async Task CreateBranchAsync()
-        {
-            await new AzureDevOpsClient(_config)
-                .CreateBranchAsync();
-        }
-
-        [TestMethod]
         public async Task CreateCommitAsync()
         {
             await new AzureDevOpsClient(_config)

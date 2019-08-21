@@ -21,43 +21,6 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
             _config = config;
         }
 
-        public async Task CreateBranchAsync()
-        {
-            try
-            {
-                var creds = new VssBasicCredential(string.Empty, _config.Token);
-
-                using (var connection = new VssConnection(new Uri(_config.BaseUrl), creds))
-                {
-                    var gitClient = connection.GetClient<GitHttpClient>();
-
-                    var items = await gitClient
-                        .GetItemsAsync(
-                            project: _config.Project,
-                            repositoryId: _config.Repository
-                        );
-
-                    var commitId = items?.FirstOrDefault()?.CommitId;
-
-                    var result = await gitClient.UpdateRefsAsync(new List<GitRefUpdate>
-                    {
-                        new GitRefUpdate
-                        {
-                            Name = $"refs/heads/Updater_{DateTime.Now}",
-                            OldObjectId = "0000000000000000000000000000000000000000",
-                            NewObjectId = commitId
-                        }
-                    },
-                    project: _config.Project,
-                    repositoryId: _config.Repository);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
         public async Task CreateCommitAsync()
         {
             try
@@ -211,7 +174,7 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                                 result.Add(new CsProjResponse
                                 {
                                     File = array,
-                                    FileName = csprojItem.RelativePath
+                                    FileRelativePath = csprojItem.RelativePath
                                 });
                             }
                         }
