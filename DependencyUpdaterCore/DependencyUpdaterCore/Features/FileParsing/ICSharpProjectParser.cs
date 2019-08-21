@@ -1,10 +1,10 @@
 ﻿using DependencyUpdaterCore.Models;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace DependencyUpdaterCore.Features.FileParsing
 {
     public interface ICSharpProjectParser
     {
-        ICsProjPackageVersion GetCsProjDependencyInfo(byte[] file);
+        ICsProjPackageVersion GetCsProjDependencyInfo(Stream fileStream);
     }
 }

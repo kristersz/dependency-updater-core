@@ -1,8 +1,10 @@
-﻿namespace DependencyUpdaterCore.Models.AzureDevOpsClient
+﻿using System.IO;
+
+namespace DependencyUpdaterCore.Models.AzureDevOpsClient
 {
     class CsProjResponse : ICsProjResponse
     {
-        public byte[] File { get; set; }
+        public Stream File { get; set; }
         public string FileRelativePath { get; set; }
     }
 }

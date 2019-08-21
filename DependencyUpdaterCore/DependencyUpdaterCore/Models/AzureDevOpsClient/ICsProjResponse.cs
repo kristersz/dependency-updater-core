@@ -1,8 +1,10 @@
-﻿namespace DependencyUpdaterCore.Models.AzureDevOpsClient
+﻿using System.IO;
+
+namespace DependencyUpdaterCore.Models.AzureDevOpsClient
 {
     public interface ICsProjResponse
     {
-        byte[] File { get; }
+        Stream File { get; }
         string FileRelativePath { get; }
     }
 }

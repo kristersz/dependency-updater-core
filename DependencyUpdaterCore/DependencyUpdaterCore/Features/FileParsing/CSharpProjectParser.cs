@@ -1,6 +1,7 @@
 ﻿using DependencyUpdaterCore.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml.Linq;
@@ -11,13 +12,11 @@ namespace DependencyUpdaterCore.Features.FileParsing
 {
     internal class CSharpProjectParser : ICSharpProjectParser
     {
-        public ICsProjPackageVersion GetCsProjDependencyInfo(byte[] file)
+        public ICsProjPackageVersion GetCsProjDependencyInfo(Stream fileStream)
         {
             try
             {
-                var fileString = Encoding.Default.GetString(file);
-
-                var xDocument = XDocument.Parse(fileString);
+                var xDocument = XDocument.Load(fileStream);
 
                 var packageReferences = xDocument
                     .XPathSelectElements("Project/ItemGroup/PackageReference");
@@ -41,6 +40,8 @@ namespace DependencyUpdaterCore.Features.FileParsing
                         Version = version
                     });
                 }
+
+                fileStream.Dispose();
 
                 return new CsProjPackageVersion
                 {

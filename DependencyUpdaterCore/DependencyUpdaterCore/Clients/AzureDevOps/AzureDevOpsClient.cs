@@ -169,19 +169,11 @@ namespace DependencyUpdaterCore.Clients.AzureDevOps
                             sha1: csprojItem.ObjectId
                             );
 
-                        using (csprojStream)
+                        result.Add(new CsProjResponse
                         {
-                            using (MemoryStream ms = new MemoryStream())
-                            {
-                                csprojStream.CopyTo(ms);
-                                var array = ms.ToArray();
-                                result.Add(new CsProjResponse
-                                {
-                                    File = array,
-                                    FileRelativePath = $"/{tree.RelativePath}/{csprojItem.RelativePath}"
-                                });
-                            }
-                        }
+                            File = csprojStream,
+                            FileRelativePath = $"/{tree.RelativePath}/{csprojItem.RelativePath}"
+                        });
                     }
 
                     return result;
