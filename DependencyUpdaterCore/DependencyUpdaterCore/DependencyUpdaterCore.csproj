@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\FileFetching\" />
     <Folder Include="Features\FileParsing\" />
   </ItemGroup>
 

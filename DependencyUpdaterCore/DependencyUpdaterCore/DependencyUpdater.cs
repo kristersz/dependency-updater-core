@@ -1,15 +1,28 @@
-﻿using DependencyUpdaterCore.Features.UpdateChecking;
+﻿using DependencyUpdaterCore.Features.FileFetching;
+using DependencyUpdaterCore.Features.FileParsing;
+using DependencyUpdaterCore.Features.FileUpdating;
+using DependencyUpdaterCore.Features.UpdateChecking;
 using DependencyUpdaterCore.Models.AzureDevOpsClient;
 
 namespace DependencyUpdaterCore
 {
     public class DependencyUpdater : IDependencyUpdater
     {
+        private readonly ICSharpProjectFileFetcher _fileFetcher;
+        private readonly ICSharpProjectParser _fileParser;
+        private readonly ICSharpProjectFileUpdater _fileUpdater;
         private readonly IDependencyUpdateChecker _updateChecker;
 
-        public DependencyUpdater()
+        public DependencyUpdater(
+            ICSharpProjectFileFetcher fileFetcher,
+            ICSharpProjectParser fileParser,
+            ICSharpProjectFileUpdater fileUpdater,
+            IDependencyUpdateChecker updateChecker)
         {
-            _updateChecker = new DependencyUpdateChecker();
+            _fileFetcher = fileFetcher;
+            _fileParser = fileParser;
+            _fileUpdater = fileUpdater;
+            _updateChecker = updateChecker;
         }
 
         public void UpdateDependencies(IAzureDevOpsConfig request)
