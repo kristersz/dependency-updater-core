@@ -36,6 +36,13 @@ namespace DependencyUpdaterCore.Features.UpdateChecking
 
                 var versions = availableVersions.Select(v => new Version(v.Version)).ToList();
 
+                if (config.IncludePrereleaseVersions)
+                {
+                    versions = versions
+                        .Where(v => !string.IsNullOrWhiteSpace(v.Prerelease))
+                        .ToList();
+                }
+
                 if (!config.IncludePrereleaseVersions)
                 {
                     versions = versions
