@@ -37,7 +37,12 @@ namespace DependencyUpdaterCore.Features.FileUpdating
 
                     packageReference.Attribute("Version").SetValue(update.Version);
 
-                    resultFiles.Add(new UpdatedCsProjFile { FileContent = clone.ToString(), PackageId = packageId });
+                    resultFiles.Add(new UpdatedCsProjFile
+                    {
+                        FileContent = clone.ToString(),
+                        PackageId = packageId,
+                        UpdatedVersion = update.Version
+                    });
                 }  
             }
 
