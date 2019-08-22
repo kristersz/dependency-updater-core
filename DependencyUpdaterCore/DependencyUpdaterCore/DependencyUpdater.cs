@@ -51,7 +51,8 @@ namespace DependencyUpdaterCore
                             {
                                 Content = updatedFile.FileContent,
                                 Path = file.FileRelativePath,
-                                PackageId = updatedFile.PackageId
+                                PackageId = updatedFile.PackageId,
+                                UpdatedVersion = updatedFile.UpdatedVersion
                             });
                     }
                 }
