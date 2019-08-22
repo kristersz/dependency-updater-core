@@ -1,10 +1,4 @@
-﻿using DependencyUpdaterCore.Clients.AzureDevOps;
-using DependencyUpdaterCore.Features.FileFetching;
-using DependencyUpdaterCore.Features.FileParsing;
-using DependencyUpdaterCore.Features.FileUpdating;
-using DependencyUpdaterCore.Features.PullRequestCreation;
-using DependencyUpdaterCore.Features.UpdateChecking;
-using DependencyUpdaterCore.Models.AzureDevOpsClient;
+﻿using DependencyUpdaterCore.Models.AzureDevOpsClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
@@ -24,14 +18,7 @@ namespace DependencyUpdaterCore.Tests
                 Repository = "riga-claims-dashboard"
             };
 
-            var azureDevopsClient = new AzureDevOpsClient(config);
-
-            var updater = new DependencyUpdater(
-                new CSharpProjectFileFetcher(azureDevopsClient),
-                new CSharpProjectParser(),
-                new CSharpProjectFileUpdater(),
-                new DependencyUpdateChecker(),
-                new PullRequestCreator(azureDevopsClient));
+            var updater = new DependencyUpdater(config);
 
             await updater.UpdateDependencies();
         }

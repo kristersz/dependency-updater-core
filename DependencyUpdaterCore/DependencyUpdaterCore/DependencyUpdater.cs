@@ -1,4 +1,5 @@
-﻿using DependencyUpdaterCore.Features.FileFetching;
+﻿using DependencyUpdaterCore.Clients.AzureDevOps;
+using DependencyUpdaterCore.Features.FileFetching;
 using DependencyUpdaterCore.Features.FileParsing;
 using DependencyUpdaterCore.Features.FileUpdating;
 using DependencyUpdaterCore.Features.PullRequestCreation;
@@ -17,18 +18,15 @@ namespace DependencyUpdaterCore
         private readonly IDependencyUpdateChecker _updateChecker;
         private readonly IPullRequestCreator _pullRequestCreator;
 
-        public DependencyUpdater(
-            ICSharpProjectFileFetcher fileFetcher,
-            ICSharpProjectParser fileParser,
-            ICSharpProjectFileUpdater fileUpdater,
-            IDependencyUpdateChecker updateChecker,
-            IPullRequestCreator pullRequestCreator)
+        public DependencyUpdater(IAzureDevOpsConfig config)
         {
-            _fileFetcher = fileFetcher;
-            _fileParser = fileParser;
-            _fileUpdater = fileUpdater;
-            _updateChecker = updateChecker;
-            _pullRequestCreator = pullRequestCreator;
+            var client = new AzureDevOpsClient(config);
+
+            _pullRequestCreator = new PullRequestCreator(client);
+            _fileFetcher = new CSharpProjectFileFetcher(client);
+            _updateChecker = new DependencyUpdateChecker();
+            _fileUpdater = new CSharpProjectFileUpdater();
+            _fileParser = new CSharpProjectParser();
         }
 
         public async Task UpdateDependencies()
