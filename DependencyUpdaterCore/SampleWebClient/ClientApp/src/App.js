@@ -5,13 +5,16 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
+import ModalLoader from './ModalLoader';
 
 function App() {
   const [takePreviews, setTakePreviews] = useState(false);
   const [takeMajor, setTakeMajor] = useState(false);
   const [repo, setRepo] = useState('');
+  const [fetching, setFetching] = useState(false);
 
   async function buttonHandler() {
+    setFetching(true);
     await fetch(
       'api/update/trigger',
       {
@@ -26,6 +29,7 @@ function App() {
           repo: repo
         })
       });
+    setFetching(false);
   }
 
   return (
@@ -55,12 +59,14 @@ function App() {
         />
 
         <Fab
+          onClick={buttonHandler}
           color="secondary"
-          className={repo.length === 0 ? null : "ButtonSpin"}
-          disabled={repo.length === 0}
+          className={(fetching || repo.length === 0) ? null : "ButtonSpin"}
+          disabled={fetching || repo.length === 0}
         >
           GO
         </Fab>
+        {fetching && <ModalLoader />}
       </header>
     </div>
   );
