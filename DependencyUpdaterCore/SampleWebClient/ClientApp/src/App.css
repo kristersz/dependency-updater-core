@@ -8,8 +8,12 @@
   pointer-events: none;
 }
 
+.ButtonSpin {
+  animation: App-logo-spin infinite 10s linear;
+}
+
 .App-header {
-  background-color: #282c34;
+  background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
