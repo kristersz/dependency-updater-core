@@ -12,9 +12,9 @@ namespace DependencyUpdaterCore.Tests.Clients
         {
             var client = new NuGetClient();
 
-            var latestVersion = await client.GetLatestPackageVersion("Newtonsoft.Json");
+            var versions = await client.GetPackageVersions("Newtonsoft.Json");
 
-            Assert.AreEqual("12.0.2", latestVersion);
+            Assert.IsNotNull(versions);
         }
 
         [TestMethod]
@@ -22,9 +22,9 @@ namespace DependencyUpdaterCore.Tests.Clients
         {
             var client = new NuGetClient();
 
-            var latestVersion = await client.GetLatestPackageVersion("If.ClaimsForms.Bot.Models");
+            var versions = await client.GetPackageVersions("If.ClaimsForms.Bot.Models");
 
-            Assert.IsNull(latestVersion);
+            Assert.IsNull(versions);
         }
     }
 }

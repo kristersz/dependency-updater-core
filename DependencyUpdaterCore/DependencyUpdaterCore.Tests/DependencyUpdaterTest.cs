@@ -1,4 +1,5 @@
-﻿using DependencyUpdaterCore.Models.AzureDevOpsClient;
+﻿using DependencyUpdaterCore.Models;
+using DependencyUpdaterCore.Models.AzureDevOpsClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
@@ -20,7 +21,11 @@ namespace DependencyUpdaterCore.Tests
 
             var updater = new DependencyUpdater(config);
 
-            await updater.UpdateDependencies();
+            await updater.UpdateDependencies(new UpdateCheckingConfig
+            {
+                IncludePrereleaseVersions = true,
+                UpdateMajorVersions = true
+            });
         }
     }
 }

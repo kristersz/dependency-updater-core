@@ -9,7 +9,7 @@ namespace DependencyUpdaterCore.Features.FileUpdating
 {
     public class CSharpProjectFileUpdater : ICSharpProjectFileUpdater
     {
-        public IList<UpdatedCsProjFile> UpdateCsProjFile(ICsProjPackageVersion csProjectFile, IList<IPackageInfo> packageInfos)
+        public IList<UpdatedCsProjFile> UpdateCsProjFile(ICsProjPackageVersion csProjectFile, IList<IPackageInfo> updates)
         {
             var resultFiles = new List<UpdatedCsProjFile>();
 
@@ -27,38 +27,21 @@ namespace DependencyUpdaterCore.Features.FileUpdating
                     continue;
                 }
 
-                var packageInfo = packageInfos.FirstOrDefault(v => v.PackageId == packageId);
+                var update = updates.FirstOrDefault(v => v.PackageId == packageId);
 
-                if (ShouldUpdatePackageVersion(packageInfo, currentVersion))
+                if (update != null)
                 {
                     var clone = new XDocument(csProjectFile.File);
 
                     var packageReference = clone.XPathSelectElements($"Project/ItemGroup/PackageReference[@Include='{packageId}']").FirstOrDefault();
 
-                    packageReference.Attribute("Version").SetValue(packageInfo.Version);
+                    packageReference.Attribute("Version").SetValue(update.Version);
 
                     resultFiles.Add(new UpdatedCsProjFile { FileContent = clone.ToString(), PackageId = packageId });
                 }  
             }
 
             return resultFiles;
-        }
-
-        private bool ShouldUpdatePackageVersion(IPackageInfo packageInfo, string currentVersion)
-        {
-            if (packageInfo == null || string.IsNullOrWhiteSpace(packageInfo.Version))
-            {
-                return false;
-            }
-
-            var versionComparison = new VersionComparer().Compare(packageInfo.Version, currentVersion);
-
-            if (versionComparison == 1)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

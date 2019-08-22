@@ -7,6 +7,6 @@ namespace DependencyUpdaterCore.Features.UpdateChecking
 {
     public interface IDependencyUpdateChecker
     {
-        Task<IList<IPackageInfo>> CheckForUpdates(IList<IPackageInfo> packages);
+        Task<IList<IPackageInfo>> CheckForUpdates(IList<IPackageInfo> packages, IUpdateCheckingConfig config);
     }
 }

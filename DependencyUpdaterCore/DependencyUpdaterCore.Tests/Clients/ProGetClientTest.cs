@@ -1,5 +1,6 @@
 ﻿using DependencyUpdaterCore.Clients.ProGet;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DependencyUpdaterCore.Tests.Clients
@@ -12,9 +13,9 @@ namespace DependencyUpdaterCore.Tests.Clients
         {
             var client = new ProGetClient();
 
-            var latestVersion = await client.GetLatestPackageVersion("If.ClaimsForms.Bot.Models");
+            var versions = await client.GetPackageVersions("If.ClaimsForms.Bot.Models");
 
-            Assert.AreEqual("1.0.65", latestVersion);
+            Assert.IsNotNull(versions);
         }
 
         [TestMethod]
@@ -22,9 +23,9 @@ namespace DependencyUpdaterCore.Tests.Clients
         {
             var client = new ProGetClient();
 
-            var latestVersion = await client.GetLatestPackageVersion("Newtonsoft.Json");
+            var versions = await client.GetPackageVersions("Newtonsoft.Json");
 
-            Assert.IsNull(latestVersion);
+            Assert.IsTrue(!versions.Any());
         }
     }
 }

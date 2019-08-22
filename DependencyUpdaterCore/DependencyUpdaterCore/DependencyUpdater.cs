@@ -4,6 +4,7 @@ using DependencyUpdaterCore.Features.FileParsing;
 using DependencyUpdaterCore.Features.FileUpdating;
 using DependencyUpdaterCore.Features.PullRequestCreation;
 using DependencyUpdaterCore.Features.UpdateChecking;
+using DependencyUpdaterCore.Models;
 using DependencyUpdaterCore.Models.AzureDevOpsClient;
 using System;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace DependencyUpdaterCore
             _fileParser = new CSharpProjectParser();
         }
 
-        public async Task UpdateDependencies()
+        public async Task UpdateDependencies(IUpdateCheckingConfig updateCheckingConfig)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace DependencyUpdaterCore
                 {
                     var dependencyInfo = _fileParser.GetCsProjDependencyInfo(file.File);
 
-                    var latestPackageVersions = await _updateChecker.CheckForUpdates(dependencyInfo.PackageInfos);
+                    var latestPackageVersions = await _updateChecker.CheckForUpdates(dependencyInfo.PackageInfos, updateCheckingConfig);
 
                     var updatedFiles = _fileUpdater.UpdateCsProjFile(dependencyInfo, latestPackageVersions);
 

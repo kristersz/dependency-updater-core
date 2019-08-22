@@ -1,4 +1,5 @@
 ﻿using DependencyUpdaterCore.Features.UpdateChecking;
+using DependencyUpdaterCore.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace DependencyUpdaterCore.Clients.ProGet
     {
         private readonly string _baseUrl = "http://cloudgallery.ifext.biz/nuget/If-Nuget";
 
-        public async Task<string> GetLatestPackageVersion(string packageId)
+        public async Task<IList<IVersionable>> GetPackageVersions(string packageId)
         {
             using (var httpClient = new HttpClient())
             {
@@ -30,16 +31,13 @@ namespace DependencyUpdaterCore.Clients.ProGet
 
                 var allPublishedPackages = JsonConvert.DeserializeObject<List<PackageData>>(results.ToString());
 
-                var sortedByVersion = allPublishedPackages
-                    .Where(c => !c.Version.Contains("-"))
-                    .OrderByDescending(p => p.Version, new VersionComparer())
+                return allPublishedPackages
+                    .Cast<IVersionable>()
                     .ToList();
-
-                return sortedByVersion.FirstOrDefault()?.Version;
             }
         }
 
-        private class PackageData
+        private class PackageData : IVersionable
         {
             public string Version { get; set; }
         }

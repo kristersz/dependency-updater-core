@@ -1,4 +1,5 @@
 ﻿using DependencyUpdaterCore.Features.UpdateChecking;
+using DependencyUpdaterCore.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace DependencyUpdaterCore.Clients.NuGet
     {
         private readonly string _baseUrl = "https://api.nuget.org/v3/registration3";
 
-        public async Task<string> GetLatestPackageVersion(string packageId)
+        public async Task<IList<IVersionable>> GetPackageVersions(string packageId)
         {
             using (var httpClient = new HttpClient())
             {
@@ -30,14 +31,10 @@ namespace DependencyUpdaterCore.Clients.NuGet
 
                 var catalogEntries = packageMetadata.Items
                     .SelectMany(p => p.Items.Select(i => i.CatalogEntry))
+                    .Cast<IVersionable>()
                     .ToList();
 
-                var sortedByVersion = catalogEntries
-                    .Where(c => !c.Version.Contains("-"))
-                    .OrderByDescending(c => c.Version, new VersionComparer())
-                    .ToList();
-
-                return sortedByVersion.FirstOrDefault()?.Version;
+                return catalogEntries;
             }
         }
 
@@ -56,7 +53,7 @@ namespace DependencyUpdaterCore.Clients.NuGet
             public NugetPackageDetails CatalogEntry { get; set; }
         }
 
-        private class NugetPackageDetails
+        private class NugetPackageDetails : IVersionable
         {
             public string Version { get; set; }
         }
