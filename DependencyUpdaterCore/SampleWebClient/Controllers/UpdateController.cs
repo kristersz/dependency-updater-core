@@ -1,4 +1,5 @@
 using DependencyUpdaterCore;
+using DependencyUpdaterCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -15,12 +16,16 @@ namespace SampleWebClient.Controllers
             _dependencyUpdater = dependencyUpdater;
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> Trigger()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Trigger([FromBody]UpdateBody model)
         {
             try
             {
-                await _dependencyUpdater.UpdateDependencies();
+                await _dependencyUpdater.UpdateDependencies(new UpdateCheckingConfig
+                {
+                    IncludePrereleaseVersions = model.TakePreviews,
+                    UpdateMajorVersions = model.TakeMajor
+                });
                 return Ok();
             }
             catch (Exception)
@@ -28,5 +33,12 @@ namespace SampleWebClient.Controllers
                 return Ok();
             }
         }
+    }
+
+    public class UpdateBody
+    {
+        public bool TakePreviews { get; set; }
+        public bool TakeMajor { get; set; }
+        public string Repo { get; set; }
     }
 }
