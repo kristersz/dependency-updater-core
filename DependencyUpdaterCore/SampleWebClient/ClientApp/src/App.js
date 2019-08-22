@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
+import Fab from '@material-ui/core/Fab';
 
 function App() {
   const [takePreviews, setTakePreviews] = useState(false);
@@ -52,18 +51,16 @@ function App() {
         <FormControlLabel
           control={<Checkbox color="primary" value={takeMajor} onChange={() => setTakeMajor(!takeMajor)} />}
           label="Update major versions"
-          style={{ marginBottom: 30, color: "black" }}
+          style={{ color: "black" }}
         />
 
-        <Button
-          onClick={buttonHandler}
-          variant="contained"
+        <Fab
           color="secondary"
           className={repo.length === 0 ? null : "ButtonSpin"}
           disabled={repo.length === 0}
         >
-          Trigger
-        </Button>
+          GO
+        </Fab>
       </header>
     </div>
   );
