@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyUpdaterCore", "De
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyUpdaterCore.Tests", "DependencyUpdaterCore.Tests\DependencyUpdaterCore.Tests.csproj", "{33854058-8B88-4DFF-8F78-C305600491BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebClient", "SampleWebClient\SampleWebClient.csproj", "{3D05849D-E1AE-4A8B-914D-AB6C2BB741DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebClient", "SampleWebClient\SampleWebClient.csproj", "{3D05849D-E1AE-4A8B-914D-AB6C2BB741DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

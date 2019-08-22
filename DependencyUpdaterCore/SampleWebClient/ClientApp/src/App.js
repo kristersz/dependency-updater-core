@@ -8,6 +8,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 
 function App() {
+
+  async function buttonHandler() {
+    await fetch('api/update/trigger');
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -32,7 +37,12 @@ function App() {
           style={{ marginBottom: 30, color: "black" }}
         />
 
-        <Button variant="contained" color="secondary" className="ButtonSpin">
+        <Button
+          onClick={buttonHandler}
+          variant="contained"
+          color="secondary"
+          className="ButtonSpin"
+        >
           Trigger
         </Button>
       </header>

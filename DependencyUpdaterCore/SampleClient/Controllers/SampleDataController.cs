@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SampleWebClient.Controllers
+namespace SampleClient.Controllers
 {
     [Route("api/[controller]")]
     public class SampleDataController : Controller
@@ -24,6 +24,13 @@ namespace SampleWebClient.Controllers
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)]
             });
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Rest()
+        {
+            var rng = new Random();
+            return Ok();
         }
 
         public class WeatherForecast
