@@ -9,9 +9,9 @@ namespace DependencyUpdaterCore.Features.FileUpdating
 {
     public class CSharpProjectFileUpdater : ICSharpProjectFileUpdater
     {
-        public IList<string> UpdateCsProjFile(ICsProjPackageVersion csProjectFile, IList<IPackageInfo> packageInfos)
+        public IList<UpdatedCsProjFile> UpdateCsProjFile(ICsProjPackageVersion csProjectFile, IList<IPackageInfo> packageInfos)
         {
-            var resultFiles = new List<string>();
+            var resultFiles = new List<UpdatedCsProjFile>();
 
             var packageReferences = csProjectFile.File
                     .XPathSelectElements("Project/ItemGroup/PackageReference");
@@ -37,7 +37,7 @@ namespace DependencyUpdaterCore.Features.FileUpdating
 
                     packageReference.Attribute("Version").SetValue(packageInfo.Version);
 
-                    resultFiles.Add(clone.ToString());
+                    resultFiles.Add(new UpdatedCsProjFile { FileContent = clone.ToString(), PackageId = packageId });
                 }  
             }
 

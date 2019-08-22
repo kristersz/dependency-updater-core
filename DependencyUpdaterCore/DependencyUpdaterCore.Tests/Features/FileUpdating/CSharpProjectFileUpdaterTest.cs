@@ -9,12 +9,7 @@ namespace DependencyUpdaterCore.Tests.Features.FileUpdating
     [TestClass]
     public class CSharpProjectFileUpdaterTest
     {
-        [TestMethod]
-        public void UpdateCsProjFile()
-        {
-            var updater = new CSharpProjectFileUpdater();
-
-            var csProjFile = @"
+        private readonly string _sampleXml = @"
 <Project Sdk=""Microsoft.NET.Sdk"">
 
   <PropertyGroup>
@@ -38,9 +33,35 @@ namespace DependencyUpdaterCore.Tests.Features.FileUpdating
 </Project>
 ";
 
+        [TestMethod]
+        public void UpdateCsProjFile_VariousDeps()
+        {
+            var updater = new CSharpProjectFileUpdater();
+
             var file = new CsProjPackageVersion
             {
-                File = XDocument.Parse(csProjFile)
+                File = XDocument.Parse(_sampleXml)
+            };
+
+            var latestVersions = new List<IPackageInfo>
+            {
+                new PackageInfo { PackageId = "Newtonsoft.Json", Version = "12.0.3" },
+                new PackageInfo { PackageId = "Microsoft.TeamFoundationServer.Client", Version = "16.143.1" }
+            };
+
+            var result = updater.UpdateCsProjFile(file, latestVersions);
+
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void UpdateCsProjFile_NonStableVersions_Ignored()
+        {
+            var updater = new CSharpProjectFileUpdater();
+
+            var file = new CsProjPackageVersion
+            {
+                File = XDocument.Parse(_sampleXml)
             };
 
             var latestVersions = new List<IPackageInfo>

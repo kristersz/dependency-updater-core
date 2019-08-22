@@ -5,6 +5,6 @@ namespace DependencyUpdaterCore.Features.FileUpdating
 {
     public interface ICSharpProjectFileUpdater
     {
-        IList<string> UpdateCsProjFile(ICsProjPackageVersion csProjectFile, IList<IPackageInfo> packageInfos);
+        IList<UpdatedCsProjFile> UpdateCsProjFile(ICsProjPackageVersion csProjectFile, IList<IPackageInfo> packageInfos);
     }
 }
