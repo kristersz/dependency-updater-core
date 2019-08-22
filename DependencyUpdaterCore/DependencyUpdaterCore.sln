@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyUpdaterCore", "DependencyUpdaterCore\DependencyUpdaterCore.csproj", "{43EAA44E-A708-440C-AAFE-A891FCA85BE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyUpdaterCore.Tests", "DependencyUpdaterCore.Tests\DependencyUpdaterCore.Tests.csproj", "{33854058-8B88-4DFF-8F78-C305600491BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyUpdaterCore.Tests", "DependencyUpdaterCore.Tests\DependencyUpdaterCore.Tests.csproj", "{33854058-8B88-4DFF-8F78-C305600491BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebClient", "SampleWebClient\SampleWebClient.csproj", "{3D05849D-E1AE-4A8B-914D-AB6C2BB741DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{33854058-8B88-4DFF-8F78-C305600491BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33854058-8B88-4DFF-8F78-C305600491BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33854058-8B88-4DFF-8F78-C305600491BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D05849D-E1AE-4A8B-914D-AB6C2BB741DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D05849D-E1AE-4A8B-914D-AB6C2BB741DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D05849D-E1AE-4A8B-914D-AB6C2BB741DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D05849D-E1AE-4A8B-914D-AB6C2BB741DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
