@@ -59,7 +59,8 @@ function App() {
           onClick={buttonHandler}
           variant="contained"
           color="secondary"
-          className="ButtonSpin"
+          className={repo.length === 0 ? null : "ButtonSpin"}
+          disabled={repo.length === 0}
         >
           Trigger
         </Button>
